@@ -2,6 +2,7 @@ package slogTracer
 
 import (
 	"context"
+	"io"
 	"log/slog"
 	"os"
 	"strings"
@@ -77,4 +78,36 @@ func TestLogging(t *testing.T) {
 	logger.DebugContext(emptyCtx, "should not print")
 	assert.NotContains(t, sb.String(), "should not print")
 	sb.Reset()
+}
+
+func BenchmarkHandler(b *testing.B) {
+	handler := slog.NewTextHandler(io.Discard, &slog.HandlerOptions{Level: slog.LevelError})
+	tracerHandler := NewHandler(handler, "X-SlogTracer", "abc")
+
+	b.Run("valid ctx", func(b *testing.B) {
+		logger := slog.New(tracerHandler)
+		validCtx := context.WithValue(context.Background(), contextKey("X-SlogTracer"), "abc")
+
+		for i := 0; i < b.N; i++ {
+			logger.DebugContext(validCtx, "test", "key", "label1", "key2", "label2")
+		}
+	})
+
+	b.Run("invalid ctx", func(b *testing.B) {
+		logger := slog.New(tracerHandler)
+		invalidCtx := context.WithValue(context.Background(), contextKey("X-SlogTracer"), "def")
+
+		for i := 0; i < b.N; i++ {
+			logger.DebugContext(invalidCtx, "test", "key", "label1", "key2", "label2")
+		}
+	})
+
+	b.Run("empty ctx", func(b *testing.B) {
+		logger := slog.New(tracerHandler)
+		emptyCtx := context.Background()
+
+		for i := 0; i < b.N; i++ {
+			logger.DebugContext(emptyCtx, "test", "key", "label1", "key2", "label2")
+		}
+	})
 }
