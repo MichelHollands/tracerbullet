@@ -27,8 +27,8 @@ func TestLogging(t *testing.T) {
 	handler := slog.NewTextHandler(&sb, &slog.HandlerOptions{Level: slog.LevelError})
 	tracerHandler := NewHandler(handler, "X-SlogTracer", "abc")
 	logger := slog.New(tracerHandler)
-	validCtx := context.WithValue(context.Background(), contextKey("X-SlogTracer"), "abc")
-	invalidCtx := context.WithValue(context.Background(), contextKey("X-SlogTracer"), "def")
+	validCtx := AddToContext(context.Background(), "X-SlogTracer", "abc")
+	invalidCtx := AddToContext(context.Background(), "X-SlogTracer", "def")
 	emptyCtx := context.Background()
 
 	logger.ErrorContext(validCtx, "should print")

@@ -6,14 +6,6 @@ import (
 	"strings"
 )
 
-type contextKey string
-
-func extractHeader(ctx context.Context, header string) (string, bool) {
-	var headerName = contextKey(header)
-	header, ok := ctx.Value(headerName).(string)
-	return header, ok
-}
-
 var _ slog.Handler = (*Handler)(nil)
 
 type Handler struct {
