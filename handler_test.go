@@ -83,10 +83,12 @@ func TestLogging(t *testing.T) {
 func BenchmarkHandler(b *testing.B) {
 	handler := slog.NewTextHandler(io.Discard, &slog.HandlerOptions{Level: slog.LevelError})
 	tracerHandler := NewHandler(handler)
+	validCtx := AddSetHeaderToContext(context.Background(), 1)
+	invalidCtx := AddSetHeaderToContext(context.Background(), 2)
+	emptyCtx := context.Background()
 
 	b.Run("valid ctx", func(b *testing.B) {
 		logger := slog.New(tracerHandler)
-		validCtx := context.WithValue(context.Background(), contextKey("setHeader"), 1)
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
@@ -96,7 +98,6 @@ func BenchmarkHandler(b *testing.B) {
 
 	b.Run("invalid ctx", func(b *testing.B) {
 		logger := slog.New(tracerHandler)
-		invalidCtx := context.WithValue(context.Background(), contextKey("setHeader"), 1)
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
@@ -106,7 +107,6 @@ func BenchmarkHandler(b *testing.B) {
 
 	b.Run("empty ctx", func(b *testing.B) {
 		logger := slog.New(tracerHandler)
-		emptyCtx := context.Background()
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
