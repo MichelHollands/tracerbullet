@@ -88,6 +88,7 @@ func BenchmarkHandler(b *testing.B) {
 		logger := slog.New(tracerHandler)
 		validCtx := context.WithValue(context.Background(), contextKey("X-SlogTracer"), "abc")
 
+		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
 			logger.DebugContext(validCtx, "test", "key", "label1", "key2", "label2")
 		}
@@ -97,6 +98,7 @@ func BenchmarkHandler(b *testing.B) {
 		logger := slog.New(tracerHandler)
 		invalidCtx := context.WithValue(context.Background(), contextKey("X-SlogTracer"), "def")
 
+		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
 			logger.DebugContext(invalidCtx, "test", "key", "label1", "key2", "label2")
 		}
@@ -106,8 +108,20 @@ func BenchmarkHandler(b *testing.B) {
 		logger := slog.New(tracerHandler)
 		emptyCtx := context.Background()
 
+		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
 			logger.DebugContext(emptyCtx, "test", "key", "label1", "key2", "label2")
 		}
 	})
+
+	b.Run("default handler", func(b *testing.B) {
+		logger := slog.New(handler)
+		emptyCtx := context.Background()
+
+		b.ResetTimer()
+		for i := 0; i < b.N; i++ {
+			logger.DebugContext(emptyCtx, "test", "key", "label1", "key2", "label2")
+		}
+	})
+
 }
