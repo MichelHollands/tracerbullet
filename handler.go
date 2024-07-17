@@ -3,35 +3,28 @@ package slogTracer
 import (
 	"context"
 	"log/slog"
-	"strings"
 )
 
 var _ slog.Handler = (*Handler)(nil)
 
 type Handler struct {
 	handler slog.Handler
-	header  string
-	value   string
+	value   int
 }
 
-func NewHandler(handler slog.Handler, headerName, expected string) Handler {
+func NewHandler(handler slog.Handler) Handler {
 	return Handler{
 		handler: handler,
-		header:  headerName,
-		value:   expected,
+		value:   defaultValue,
 	}
 }
 
 func (h Handler) valid(ctx context.Context) bool {
-	header, ok := extractHeader(ctx, h.header)
+	value, ok := extractSetHeader(ctx)
 	if !ok {
 		return false
 	}
-	// HTTP headers are case insensitive
-	if strings.EqualFold(header, h.value) {
-		return true
-	}
-	return false
+	return value == h.value
 }
 
 func (h Handler) Enabled(ctx context.Context, level slog.Level) bool {
