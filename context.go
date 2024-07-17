@@ -4,12 +4,14 @@ import "context"
 
 type contextKey string
 
-func extractHeader(ctx context.Context, header string) (string, bool) {
-	var headerName = contextKey(header)
-	header, ok := ctx.Value(headerName).(string)
-	return header, ok
+const setHeader = contextKey("X-SlogTracer-Set")
+const defaultValue = 1
+
+func extractSetHeader(ctx context.Context) (int, bool) {
+	value, ok := ctx.Value(setHeader).(int)
+	return value, ok
 }
 
-func AddToContext(ctx context.Context, header, value string) context.Context {
-	return context.WithValue(ctx, contextKey(header), value)
+func AddSetHeaderToContext(ctx context.Context, value int) context.Context {
+	return context.WithValue(ctx, setHeader, value)
 }
