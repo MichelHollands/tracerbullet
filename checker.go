@@ -3,7 +3,7 @@ package slogTracer
 import "strings"
 
 type AccessChecker interface {
-	Check(header, value string) bool
+	Check(value string) bool
 	Header() string
 	Value() string
 }
@@ -20,8 +20,8 @@ func NewStaticAccessChecker(header, value string) AccessChecker {
 	}
 }
 
-func (ac *accessChecker) Check(header, value string) bool {
-	return strings.EqualFold(ac.header, ac.value)
+func (ac *accessChecker) Check(value string) bool {
+	return strings.EqualFold(ac.value, ac.value)
 }
 
 func (ac *accessChecker) Value() string {

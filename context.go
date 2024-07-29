@@ -6,8 +6,6 @@ import (
 
 type contextKey string
 
-const traceHeader = contextKey("X-SlogTracer")
-
 const setHeader = contextKey("X-SlogTracer-Set")
 const defaultValue = 1
 
@@ -24,11 +22,13 @@ func AddSetHeaderWithCustomValueToContext(ctx context.Context, value int) contex
 	return context.WithValue(ctx, setHeader, value)
 }
 
-func extractHeader(ctx context.Context) (string, bool) {
-	value, ok := ctx.Value(traceHeader).(string)
+func extractHeader(ctx context.Context, header string) (string, bool) {
+	hdr := contextKey(header)
+	value, ok := ctx.Value(hdr).(string)
 	return value, ok
 }
 
-func AddTraceHeaderToContext(ctx context.Context, value int) context.Context {
+func AddTraceHeaderToContext(ctx context.Context, header, value string) context.Context {
+	traceHeader := contextKey(header)
 	return context.WithValue(ctx, traceHeader, value)
 }
