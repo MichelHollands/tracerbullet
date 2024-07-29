@@ -1,0 +1,11 @@
+services:
+  server1:
+    platform: linux/amd64
+    build:
+      dockerfile: example/Dockerfile
+      context: ..
+    environment:
+      PORT: "3000"
+      NEXTHOP: ""
+    ports:
+    - "3000:3000"
