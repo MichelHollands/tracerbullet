@@ -6,6 +6,16 @@ services:
       context: ..
     environment:
       PORT: "3000"
-      NEXTHOP: ""
+      NEXTHOP: "server2:3000"
     ports:
     - "3000:3000"
+  server2:
+    platform: linux/amd64
+    build:
+      dockerfile: example/Dockerfile
+      context: ..
+    environment:
+      PORT: "3000"
+      NEXTHOP: ""
+    ports:
+    - "3100:3000"

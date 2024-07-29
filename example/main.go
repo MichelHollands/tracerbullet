@@ -19,7 +19,7 @@ func NewServer(logger *slog.Logger, nextHop string) http.Handler {
 	ac := slogTracer.NewStaticAccessChecker(header, headerValue)
 
 	client := &http.Client{
-		Transport: slogTracer.NewRoundTripper(http.DefaultTransport, ac),
+		Transport: slogTracer.NewRoundTripper(http.DefaultTransport, logger, ac),
 	}
 
 	mux.Handle("/action", slogTracer.NewMiddleware(doAction(client, logger, nextHop), logger, ac))
@@ -38,11 +38,16 @@ func doAction(client *http.Client, logger *slog.Logger, nextHop string) http.Han
 
 			if len(nextHop) != 0 {
 				logger.DebugContext(ctx, "calling nextHop")
-				_, err := client.Get(fmt.Sprintf("http://%s/action", nextHop))
+				r, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("http://%s/action", nextHop), nil)
 				logger.DebugContext(ctx, "called nextHop")
 				if err != nil {
-					logger.ErrorContext(ctx, fmt.Sprintf("error calling nextHop: %v", err.Error()))
+					logger.ErrorContext(ctx, fmt.Sprintf("error creating request: %v", err.Error()))
 				}
+				resp, err := client.Do(r)
+				if err != nil {
+					logger.ErrorContext(ctx, fmt.Sprintf("error calling request: %v", err.Error()))
+				}
+				defer resp.Body.Close()
 			}
 
 			logger.DebugContext(ctx, "debug stopped")
