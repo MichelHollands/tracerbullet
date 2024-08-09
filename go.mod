@@ -1,4 +1,4 @@
-module github.com/MichelHollands/slogTracer
+module github.com/MichelHollands/tracerbullet
 
 go 1.22.5
 

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/MichelHollands/slogTracer"
+	"github.com/MichelHollands/tracerbullet"
 )
 
 const header = "X-TracerBullet"
@@ -16,13 +16,13 @@ const headerValue = "abcdef"
 func NewServer(logger *slog.Logger, nextHop string) http.Handler {
 	mux := http.NewServeMux()
 
-	ac := slogTracer.NewStaticAccessChecker(header, headerValue)
+	ac := tracerbullet.NewStaticAccessChecker(header, headerValue)
 
 	client := &http.Client{
-		Transport: slogTracer.NewRoundTripper(http.DefaultTransport, logger, ac),
+		Transport: tracerbullet.NewRoundTripper(http.DefaultTransport, logger, ac),
 	}
 
-	mux.Handle("/action", slogTracer.NewMiddleware(doAction(client, logger, nextHop), logger, ac))
+	mux.Handle("/action", tracerbullet.NewMiddleware(doAction(client, logger, nextHop), logger, ac))
 
 	var handler http.Handler = mux
 	return handler
@@ -60,7 +60,7 @@ func main() {
 	nextHop := os.Getenv("NEXTHOP")
 
 	handler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})
-	tracerHandler := slogTracer.NewHandler(handler)
+	tracerHandler := tracerbullet.NewHandler(handler)
 	logger := slog.New(tracerHandler)
 
 	logger.Info("starting server")
