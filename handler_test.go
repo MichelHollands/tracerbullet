@@ -80,8 +80,8 @@ func TestLogging(t *testing.T) {
 	sb.Reset()
 }
 
-func BenchmarkHandler(b *testing.B) {
-	handler := slog.NewTextHandler(io.Discard, &slog.HandlerOptions{Level: slog.LevelError})
+func BenchmarkHandlerDebugLevel(b *testing.B) {
+	handler := slog.NewTextHandler(io.Discard, &slog.HandlerOptions{Level: slog.LevelDebug})
 	tracerHandler := NewHandler(handler)
 
 	validCtx := AddSetHeaderToContext(context.Background())

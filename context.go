@@ -6,7 +6,7 @@ import (
 
 type contextKey string
 
-const setHeader = contextKey("X-SlogTracer-Set")
+const setHeader = contextKey("X-TracerBullet-Set")
 const defaultValue = 1
 
 func extractSetHeader(ctx context.Context) (int, bool) {
