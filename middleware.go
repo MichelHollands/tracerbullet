@@ -1,4 +1,4 @@
-package slogTracer
+package tracerbullet
 
 import (
 	"log/slog"
