@@ -78,6 +78,23 @@ func TestLogging(t *testing.T) {
 	logger.DebugContext(emptyCtx, "should not print")
 	assert.NotContains(t, sb.String(), "should not print")
 	sb.Reset()
+
+	// Test the non context logging methods as well
+	logger.Error("should print")
+	assert.Contains(t, sb.String(), "should print")
+	sb.Reset()
+
+	logger.Info("should not print")
+	assert.NotContains(t, sb.String(), "should not print")
+	sb.Reset()
+
+	logger.Warn("should not print")
+	assert.NotContains(t, sb.String(), "should not print")
+	sb.Reset()
+
+	logger.Debug("should not print")
+	assert.NotContains(t, sb.String(), "should not print")
+	sb.Reset()
 }
 
 func BenchmarkHandlerDebugLevel(b *testing.B) {
