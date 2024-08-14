@@ -79,7 +79,7 @@ func TestLogging(t *testing.T) {
 	assert.NotContains(t, sb.String(), "should not print")
 	sb.Reset()
 
-	// Test the logging methods without the context
+	// Test the non context logging methods as well
 	logger.Error("should print")
 	assert.Contains(t, sb.String(), "should print")
 	sb.Reset()
