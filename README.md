@@ -16,6 +16,8 @@ The RoundTripper has to be added to any Transport that connects to other HTTP se
 
 [NewStaticAccessChecker](checker.go) creates an AccessChecker that uses the hard-coded header and value specified in it's parameters. This should not be used in production.
 
+The `Context` versions of `slog.Info`, `slog.Error`, `slog.Warn` and `slog.Debug` have to be used so the context is passed in.
+
 [example/main.go](example/main.go) shows all of these used in a test program.
 
 ## Docker compose example
